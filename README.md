@@ -13,7 +13,7 @@
 
 上一个交付（`index.html` 设计站点）是架构方案；**这个仓库是能跑真实业务的工程实现**：
 
-- 真数据库：SQLite（WAL 模式），12 张业务表、12 个物料、8 个供应商、历史订单/应收/凭证种子数据；
+- 真数据库：SQLite（WAL 模式），14 张业务表、12 个物料、8 个供应商、历史订单/应收/凭证种子数据；
 - 真事务：一次「收货入库」在同一个数据库事务里完成 **库存更新 + 库存流水 + 凭证草稿生成 + 订单状态流转 + 审计留痕**，任一步失败整体回滚；
 - 真 API：16 个 REST 接口，全部读写真实表，支持 `Idempotency-Key` 幂等；
 - 真规则：AI 只产出「建议」，硬规则对借贷平衡、预算额度、分摊权重、重复过账有一票否决权；
@@ -35,7 +35,7 @@ python server.py                      # Python 3.9+
 ```bash
 curl http://127.0.0.1:8766/api/health
 ./deploy.sh check                     # 健康检查 + 业务冒烟
-python tests/test_api.py              # 8 组真实接口测试
+python tests/test_api.py              # 7 组真实接口测试
 ```
 
 Docker 部署（含健康检查与数据卷持久化）：
@@ -147,7 +147,9 @@ modern-erp-system/
 ├── deploy.sh                 # local / docker / check 三种模式
 ├── docs/
 │   ├── 现代ERP系统设计说明书.md
-│   └── 云枢ERP_项目讲解_1080p.mp4   # 5 分钟 1080p 讲解视频
+│   ├── 云枢ERP_项目讲解_1080p.mp4   # 5 分钟 1080p 讲解视频
+│   ├── 云枢ERP_项目讲解_中英字幕.srt
+│   └── preview.png                  # 运行界面截图
 └── README.md
 ```
 
