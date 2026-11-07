@@ -1,0 +1,22 @@
+services:
+  erp:
+    build: .
+    image: yunshu-erp:1.0.0
+    container_name: yunshu-erp
+    ports:
+      - "8766:8766"
+    environment:
+      ERP_DB_PATH: /app/data/erp.db
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - erp-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8766/api/health',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+volumes:
+  erp-data:

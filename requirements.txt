@@ -1,0 +1,5 @@
+# 云枢 ERP 运行时零第三方依赖，仅使用 Python 标准库（http.server / sqlite3 / urllib）。
+# Python >= 3.9
+#
+# 可选（仅开发/测试用，非必需）：
+#   pytest>=7.0        # 也可直接 python tests/test_api.py

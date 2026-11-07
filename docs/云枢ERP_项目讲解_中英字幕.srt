@@ -1,0 +1,304 @@
+1
+00:00:06,850 --> 00:00:10,056
+前面那份网页，解决的是现代ERP该怎么设计。
+The earlier page answered how a modern ERP should be designed.
+
+2
+00:00:10,476 --> 00:00:13,519
+这个仓库解决的是另一件事，把它真正跑起来。
+This repository does something else: make it actually run.
+
+3
+00:00:13,939 --> 00:00:18,493
+数据库、接口、事务、部署和审计，全都是真的。
+Database, APIs, transactions, deployment and audit are all real.
+
+4
+00:00:18,913 --> 00:00:23,224
+接下来五分钟，我会部署一次，再把业务走一遍。
+In five minutes I will deploy it and walk through the business.
+
+5
+00:00:23,644 --> 00:00:26,878
+仓库是公开的，地址一直显示在画面底部。
+The repo is public, and its address stays at the bottom.
+
+6
+00:00:29,728 --> 00:00:33,094
+设计输入来自三支关于企业软件的讲解视频。
+The design input came from three videos about enterprise software.
+
+7
+00:00:33,514 --> 00:00:37,277
+第一支说，大模型用任务驱动后台业务服务。
+The first said models drive business services through tasks.
+
+8
+00:00:37,697 --> 00:00:42,501
+第二支说，要重塑ERP本身，而不是外挂一个AI。
+The second said reshape the ERP itself, not bolt on an AI.
+
+9
+00:00:42,921 --> 00:00:47,165
+第三支提醒，中国企业真正缺的是标准化地基。
+The third warned that standardisation is the missing foundation.
+
+10
+00:00:47,585 --> 00:00:51,988
+三条结论合起来，就是稳定内核加智能外壳。
+Together they mean a stable core plus an intelligent shell.
+
+11
+00:00:54,838 --> 00:00:58,261
+账务和库存是记录系统，不能交给概率模型改写。
+Ledger and stock are records, never rewritten by a probabilistic model.
+
+12
+00:00:58,681 --> 00:01:01,941
+主数据和指标口径，必须先于智能体上线。
+Master data and metric definitions come before any agent.
+
+13
+00:01:02,361 --> 00:01:06,151
+作业与分析一体，实时数据直接嵌进业务界面。
+Transactions and analytics merge, with live data inside the workflow.
+
+14
+00:01:06,571 --> 00:01:10,623
+每个AI动作都要可追溯，高风险动作必须有人确认。
+Every AI action is traceable, and risky ones need human approval.
+
+15
+00:01:11,043 --> 00:01:14,689
+面向失败设计：多副本、幂等、对账和演练。
+Design for failure: replicas, idempotency, reconciliation, drills.
+
+16
+00:01:17,539 --> 00:01:21,315
+接入层用自然语言与多模态，网关层统一流量和权限。
+Natural language at the edge, unified traffic and identity at the gate.
+
+17
+00:01:21,735 --> 00:01:25,201
+业务层拆成十二个限界上下文，各自独立扩缩容。
+Twelve bounded contexts in the service layer, scaled independently.
+
+18
+00:01:25,621 --> 00:01:29,891
+AI层负责模型网关、任务编排、检索和规则校验。
+The AI layer owns model routing, orchestration, retrieval and rules.
+
+19
+00:01:30,311 --> 00:01:34,707
+账务用强一致事务库，海量流水交给分布式与列存。
+Strong consistency for ledger, distributed storage for high volume.
+
+20
+00:01:35,127 --> 00:01:39,010
+容器多集群承载同城双活，异地保留温备。
+Multiple clusters carry dual active zones, with a warm DR site.
+
+21
+00:01:41,860 --> 00:01:44,806
+先看业务闭环，而不是漂亮的静态页面。
+Look at the business loop first, not a pretty static page.
+
+22
+00:01:45,226 --> 00:01:49,005
+AI推荐供应商只出建议，人工确认后才创建订单。
+AI suggests suppliers; a human confirms before any order is created.
+
+23
+00:01:49,425 --> 00:01:52,881
+收货入库是一个原子事务，五张表同时写入。
+Receiving goods is one atomic transaction across five tables.
+
+24
+00:01:53,301 --> 00:01:58,211
+库存、流水、凭证草稿、订单状态和审计一起提交。
+Stock, ledger lines, voucher draft, order state and audit commit together.
+
+25
+00:01:58,631 --> 00:02:02,036
+凭证必须由财务复核过账，硬规则一票否决。
+Vouchers need a finance review, with hard rules holding a veto.
+
+26
+00:02:04,886 --> 00:02:08,829
+传统平行记账靠预设规则，业务一灵活就卡住。
+Classic parallel booking relies on preset rules and breaks on exceptions.
+
+27
+00:02:09,249 --> 00:02:12,820
+新架构让AI判断科目与分摊，但只生成草稿。
+The new design lets AI infer accounts, but only as a draft.
+
+28
+00:02:13,240 --> 00:02:18,645
+借贷平衡、税码、期间和权限由规则引擎兜底。
+Balance, tax codes, periods and permissions are enforced by rules.
+
+29
+00:02:19,065 --> 00:02:22,693
+这样既解决不灵活，也保住财务的严谨与可审计。
+That keeps flexibility without losing rigour and auditability.
+
+30
+00:02:25,543 --> 00:02:28,695
+现在开始实际部署，命令都写在仓库说明里。
+Now the actual deployment, with commands from the README.
+
+31
+00:02:29,115 --> 00:02:32,730
+第一步克隆公开仓库，项目零第三方依赖。
+First clone the public repo; it has zero third-party dependencies.
+
+32
+00:02:33,150 --> 00:02:36,469
+直接运行server点py，服务在八七六六端口启动。
+Run server.py directly, and the service starts on port eight seven six six.
+
+33
+00:02:36,889 --> 00:02:41,433
+启动日志会打印数据库位置、健康检查和仓库地址。
+Startup logs print the database path, health check and repo URL.
+
+34
+00:02:41,853 --> 00:02:45,523
+用curl打健康检查，返回UP和十四张业务表。
+Curl the health endpoint: UP, with fourteen business tables.
+
+35
+00:02:45,943 --> 00:02:49,961
+再跑一次冒烟检查，驾驶舱和订单都有真实数据。
+A smoke check shows real data in the dashboard and orders.
+
+36
+00:02:50,381 --> 00:02:53,897
+也可以一行命令用compose起容器，带健康检查。
+One compose command also starts a container with a health check.
+
+37
+00:02:56,747 --> 00:03:00,790
+部署完成，健康检查、指标和审计接口都已就绪。
+Deployment is done: health, metrics and audit endpoints are live.
+
+38
+00:03:01,210 --> 00:03:04,725
+数据库用WAL模式，写事务串行化并带幂等键。
+SQLite runs in WAL mode, with serialised writes and idempotency keys.
+
+39
+00:03:05,145 --> 00:03:09,176
+七组接口测试覆盖下单、收货、过账和留痕。
+Seven API test groups cover ordering, receiving, posting and audit.
+
+40
+00:03:09,596 --> 00:03:13,613
+Docker镜像有健康检查，数据卷负责持久化。
+The image has a health check, and a volume persists the data.
+
+41
+00:03:16,463 --> 00:03:20,069
+现在进入真实运行界面，先看经营驾驶舱。
+Now the live UI, starting with the operations dashboard.
+
+42
+00:03:20,489 --> 00:03:25,029
+订单额、准时交付率和异常洞察，都来自真实聚合。
+Order value, on-time rate and alerts are real SQL aggregations.
+
+43
+00:03:25,449 --> 00:03:29,880
+切到采购协同，选择物料和数量，让AI推荐供应商。
+Switch to procurement, pick an item and ask AI for suppliers.
+
+44
+00:03:30,300 --> 00:03:34,232
+评分由交付率、质量、价格和历史订单真实算出。
+Scores come from delivery, quality, price and order history.
+
+45
+00:03:34,652 --> 00:03:39,130
+确认后创建订单，服务返回订单号与追踪编号。
+Confirm to create the order; the service returns an ID and trace.
+
+46
+00:03:39,550 --> 00:03:43,739
+执行收货入库，库存实时增加七百六十件并写入流水。
+Receiving adds seven hundred sixty units and writes a ledger row.
+
+47
+00:03:44,159 --> 00:03:47,450
+系统同时生成凭证草稿，进入业财一体化页面。
+A voucher draft is created at the same time, in the finance view.
+
+48
+00:03:47,870 --> 00:03:51,854
+财务复核过账，借贷平衡校验通过后才写入审计。
+Finance posts it only after the balance check passes.
+
+49
+00:03:52,274 --> 00:03:56,053
+最后用Copilot问库存，它编排工具并返回引用。
+Finally ask Copilot about stock; it orchestrates tools and cites sources.
+
+50
+00:03:58,903 --> 00:04:02,638
+智能层不会直接写总账，这是整套设计的底线。
+The AI layer never writes the ledger directly; that is the baseline.
+
+51
+00:04:03,058 --> 00:04:10,670
+建议、校验、审批、执行、凭证、审计，共六步闸门。
+Suggest, validate, approve, execute, book, audit: six gates.
+
+52
+00:04:11,090 --> 00:04:14,739
+生产环境把单机库换成强一致集群，业务代码不动。
+In production swap the database for a consistent cluster; code stays.
+
+53
+00:04:15,159 --> 00:04:19,132
+目标是四个九可用性，账务零数据丢失。
+Target four nines availability and zero data loss for the ledger.
+
+54
+00:04:21,982 --> 00:04:25,907
+测试会起一个真实服务，打真实接口，验真实副作用。
+Tests start a real server, hit real endpoints, verify real side effects.
+
+55
+00:04:26,327 --> 00:04:30,604
+重复下单返回同一订单号，重复收货返回四零九。
+Duplicate orders return the same ID; duplicate receipts return 409.
+
+56
+00:04:31,024 --> 00:04:34,447
+借贷不平衡的凭证，硬规则直接拒绝过账。
+An unbalanced voucher is rejected outright by the hard rules.
+
+57
+00:04:34,867 --> 00:04:39,297
+代码、文档、部署脚本和讲解视频都在公开仓库。
+Code, docs, deploy scripts and the video all live in the public repo.
+
+58
+00:04:42,147 --> 00:04:46,020
+总结一下，这不是演示原型，是能部署的业务系统。
+To sum up: this is a deployable business system, not a mockup.
+
+59
+00:04:46,440 --> 00:04:50,884
+稳定内核保证账务准确，智能外壳负责建议与编排。
+A stable core keeps books exact; the AI shell suggests and orchestrates.
+
+60
+00:04:51,304 --> 00:04:54,781
+所有写操作都有事务、幂等和审计留痕。
+Every write has a transaction, an idempotency key and an audit trail.
+
+61
+00:04:55,201 --> 00:04:58,295
+完整代码与设计说明书，都在底部这个公开仓库。
+Full code and the design document are in the public repo below.

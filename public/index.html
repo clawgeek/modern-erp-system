@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>云枢 ERP · 现代企业级业务系统</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark">◆</div><div><b>云枢 ERP</b><small>YUNSHU ENTERPRISE SUITE</small></div></div>
+    <div class="navgrp">工作台</div>
+    <button class="nav on" data-view="dash"><span>▤</span>经营驾驶舱</button>
+    <div class="navgrp">业务域</div>
+    <button class="nav" data-view="po"><span>▣</span>采购协同</button>
+    <button class="nav" data-view="inv"><span>▥</span>库存台账</button>
+    <button class="nav" data-view="fin"><span>▦</span>业财一体化</button>
+    <div class="navgrp">智能与治理</div>
+    <button class="nav" data-view="ai"><span>✦</span>AI Copilot</button>
+    <button class="nav" data-view="ops"><span>◈</span>审计与监控</button>
+    <div class="sidefoot">
+      <div class="ok"><i></i><span id="sideStatus">服务连接中…</span></div>
+      <a href="https://github.com/clawgeek/modern-erp-system" target="_blank">github.com/clawgeek/<br>modern-erp-system ↗</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div class="crumb">云枢 ERP <em>/</em> <b id="crumb">经营驾驶舱</b></div>
+      <div class="topright">
+        <span class="pill" id="envPill">DEMO · SQLite/WAL</span>
+        <span class="pill ok" id="healthPill">● 检查中</span>
+        <span class="clock" id="clock">--:--:--</span>
+        <span class="avatar">张</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- 驾驶舱 -->
+      <section class="view on" id="view-dash">
+        <div class="phead"><h1>经营驾驶舱</h1><span class="tag">实时聚合 · SQLite 真实业务表</span></div>
+        <div class="stats" id="dashStats"></div>
+        <div class="row2">
+          <div class="card"><h3>近 12 个月订单额（万元）</h3><svg id="chartLine" viewBox="0 0 620 200"></svg></div>
+          <div class="card"><h3>大区应收分布（万元）</h3><svg id="chartBar" viewBox="0 0 320 200"></svg></div>
+        </div>
+        <div class="card"><h3>实时异常洞察 <small>由库存水位与历史交付真实计算</small></h3><div id="alerts"></div></div>
+      </section>
+
+      <!-- 采购 -->
+      <section class="view" id="view-po">
+        <div class="phead"><h1>采购协同</h1><span class="tag">AI 建议态 · 人工确认后落库</span></div>
+        <div class="card">
+          <h3>新建采购订单</h3>
+          <div class="form">
+            <label>物料<select id="poSku"></select></label>
+            <label>数量<input id="poQty" type="number" value="760" min="1"></label>
+            <label>供应商<select id="poSupplier"></select></label>
+            <button class="btn ghost" id="btnRecommend">✦ AI 推荐供应商</button>
+            <button class="btn" id="btnCreate">创建采购订单</button>
+          </div>
+          <div id="recResult"></div>
+        </div>
+        <div class="card"><h3>采购订单 <small>收货入库会触发库存 + 流水 + 凭证草稿的原子事务</small></h3>
+          <div class="tablewrap"><table class="tbl" id="orderTable"></table></div>
+        </div>
+      </section>
+
+      <!-- 库存 -->
+      <section class="view" id="view-inv">
+        <div class="phead"><h1>库存台账</h1><span class="tag">inventory / inventory_ledger</span></div>
+        <div class="card"><h3>实时库存 <small>低于安全水位自动标红</small></h3>
+          <div class="tablewrap"><table class="tbl" id="invTable"></table></div></div>
+        <div class="card"><h3>最近库存流水</h3><div class="tablewrap"><table class="tbl" id="ledgerTable"></table></div></div>
+      </section>
+
+      <!-- 业财 -->
+      <section class="view" id="view-fin">
+        <div class="phead"><h1>业财一体化 · 凭证工作台</h1><span class="tag">AI 判断 + 硬规则一票否决</span></div>
+        <div class="card">
+          <h3>业务事件</h3>
+          <p class="muted">EV-261107-0041：市场部「秋季新品发布会」会务费 ¥86,400.00，涉及 A / B 两条产品线，发票影像已 OCR 入库，未指定成本中心。传统「平行记账」因缺少预设分摊规则会直接卡住。</p>
+          <button class="btn" id="btnVoucher">✦ AI 生成凭证草稿</button>
+          <span class="hint" id="voucherHint"></span>
+        </div>
+        <div class="card"><h3>凭证列表 <small>点击行展开分录，草稿需人工复核过账</small></h3>
+          <div class="tablewrap"><table class="tbl" id="voucherTable"></table></div></div>
+      </section>
+
+      <!-- Copilot -->
+      <section class="view" id="view-ai">
+        <div class="phead"><h1>AI Copilot</h1><span class="tag">自然语言 → 任务编排 → 真实业务查询</span></div>
+        <div class="card">
+          <div class="chips" id="chips">
+            <span class="chip">查询低于安全水位的库存并生成补货任务</span>
+            <span class="chip">统计当前逾期应收并生成催办任务</span>
+            <span class="chip">为 A1024 推荐供应商</span>
+            <span class="chip">按受益产品线生成费用凭证草稿</span>
+            <span class="chip">查看审计日志条数</span>
+          </div>
+          <div class="ask"><input id="askInput" placeholder="用自然语言查询企业数据或发起业务任务…"><button class="btn" id="btnAsk">发送</button></div>
+          <div class="terminal" id="copilotLog"></div>
+          <div id="copilotAnswer"></div>
+        </div>
+      </section>
+
+      <!-- 运维 -->
+      <section class="view" id="view-ops">
+        <div class="phead"><h1>审计与监控</h1><span class="tag">每个写操作带 trace_id 与前后快照</span></div>
+        <div class="row2">
+          <div class="card"><h3>服务健康</h3><pre id="healthJson">载入中…</pre></div>
+          <div class="card"><h3>运行时指标</h3><pre id="metricsJson">载入中…</pre></div>
+        </div>
+        <div class="card"><h3>审计日志</h3><div class="tablewrap"><table class="tbl" id="auditTable"></table></div></div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <span>◆ 云枢 ERP · AI 原生 / 高可用企业级现代 ERP</span>
+      <span>开源仓库：<a href="https://github.com/clawgeek/modern-erp-system" target="_blank">github.com/clawgeek/modern-erp-system</a></span>
+    </footer>
+  </div>
+</div>
+<div id="cursor" aria-hidden="true"></div>
+<div id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>
