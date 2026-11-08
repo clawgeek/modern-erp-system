@@ -2,16 +2,15 @@
 
 > **AI 原生 + 高可用企业级现代 ERP 的真实业务实现**
 > 开源地址：**https://github.com/clawgeek/modern-erp-system** （Public）
-> 设计来源：三支 B 站视频（大模型重塑企业级 IT 应用 / AI 重塑 ERP / 用不好 ERP 却信中台和阿米巴）→ [完整设计说明书](docs/现代ERP系统设计说明书.md)
 > 讲解视频：[docs/云枢ERP_项目讲解_1080p.mp4](docs/云枢ERP_项目讲解_1080p.mp4) · 1920×1080 / 5 分钟 / 中英字幕
 
 ![云枢 ERP 真实运行界面](docs/preview.png)
 
 ---
 
-## 这不是静态原型
+## 真实业务实现
 
-上一个交付（`index.html` 设计站点）是架构方案；**这个仓库是能跑真实业务的工程实现**：
+这是一个可部署、可测试、能跑通完整业务闭环的工程实现：
 
 - 真数据库：SQLite（WAL 模式），14 张业务表、12 个物料、8 个供应商、历史订单/应收/凭证种子数据；
 - 真事务：一次「收货入库」在同一个数据库事务里完成 **库存更新 + 库存流水 + 凭证草稿生成 + 订单状态流转 + 审计留痕**，任一步失败整体回滚；
@@ -104,20 +103,20 @@ curl -X POST http://127.0.0.1:8766/api/orders \
 
 ---
 
-## 架构映射（设计方案 → 本仓库实现）
+## 架构与选型映射
 
-| 设计方案（企业级选型） | 本仓库可运行实现 | 生产替换路径 |
+| 生产级选型 | 本仓库可运行实现 | 生产替换路径 |
 |---|---|---|
 | MySQL 8.0 MGR 半同步 / TiDB | SQLite WAL + 严格事务 | 换成 MySQL MGR / TiDB，业务层不变 |
 | Spring Boot 3 + Nacos/Sentinel | Python 标准库 HTTP 服务 + 路由分发 | 领域服务拆分为 12 个微服务 |
 | Kafka/RocketMQ 事务消息 + Saga | `events` 事件表 + 原子事务 | 换事务消息 + 对账任务 |
-| Flink CDC → Doris 实时 OLAP | 定时/实时 SQL 聚合 `/api/dashboard` | 换 Flink CDC + Doris |
+| Flink CDC → Doris 实时 OLAP | 实时 SQL 聚合 `/api/dashboard` | 换 Flink CDC + Doris |
 | 私有 Qwen3/DeepSeek + vLLM 网关 | 可解释加权评分 + 语义规则（可替换） | 接模型网关，保持「建议态」契约 |
 | Drools 硬规则一票否决 | `approve_voucher` / 预算 / 权重校验 | 换规则中心，接口契约不变 |
-| 同城双活 + 异地灾备 | 单容器 + healthcheck + 数据卷 | 多副本 + 网关切流，见设计说明书 |
+| 同城双活 + 异地灾备 | 单容器 + healthcheck + 数据卷 | 多副本 + 网关切流 |
 | OTel + Prometheus 可观测 | `/api/health` + `/api/metrics` + 审计日志 | 接 OTel/Prometheus |
 
-**设计取舍写清楚**：本仓库保证「业务逻辑真实、事务真实、可一键部署」，用 SQLite 换掉分布式数据库，是为了让任何人 30 秒内跑起来；生产高可用方案（SLO 99.99%、RPO=0、同城 RTO<15min）在 `docs/现代ERP系统设计说明书.md` 中给出，接口与领域边界保持一致，可直接替换基础设施层。
+**设计取舍**：本仓库保证「业务逻辑真实、事务真实、可一键部署」，用 SQLite 换掉分布式数据库，是为了让任何人 30 秒内跑起来。生产环境的目标指标为 SLO 99.99%、账务 RPO=0、同城 RTO<15min；接口与领域边界保持一致，可直接替换基础设施层。
 
 ---
 
@@ -141,12 +140,12 @@ modern-erp-system/
 │   ├── index.html            # 六视图 SPA 外壳
 │   ├── styles.css            # 企业级浅色主题
 │   └── app.js                # 真实 API 交互 + ?demo=1 逐帧录制模式
-├── tests/test_api.py         # 起真实服务跑 8 组业务测试
+├── tests/test_api.py         # 起真实服务跑 7 组业务测试
 ├── Dockerfile                # python:3.12-slim + HEALTHCHECK
 ├── docker-compose.yml        # 数据卷持久化 + 健康检查 + 自动重启
 ├── deploy.sh                 # local / docker / check 三种模式
 ├── docs/
-│   ├── 现代ERP系统设计说明书.md
+│   ├── 现代ERP系统设计说明书.md   # 架构与高可用选型说明
 │   ├── 云枢ERP_项目讲解_1080p.mp4   # 5 分钟 1080p 讲解视频
 │   ├── 云枢ERP_项目讲解_中英字幕.srt
 │   └── preview.png                  # 运行界面截图
